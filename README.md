@@ -15,3 +15,5 @@ To exit cars, press d again.
 This program was created with Phaser.js.
 Thank you to PhotonStorm for helping to create this amazing framework!
 Thank you to Nurikabe for guiding me during every step of the way!
+Thank you to Freesound for supplying me with great sounds!
+Thank you to OpenGameArt for giving me access to some great assets.
