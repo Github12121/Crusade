@@ -17,11 +17,15 @@ var BootScene = new Phaser.Class({
 
         // our two characters
         this.load.spritesheet('player', 'assets/RPG_assets.png', { frameWidth: 16, frameHeight: 16 });
+
+
+        this.load.audio('backgroundMusic', 'assets/bensound-scifi.mp3' );
     },
 
     create: function ()
     {
         this.scene.start('WorldScene');
+
     }
 });
 
@@ -38,6 +42,9 @@ var WorldScene = new Phaser.Class({
     },
 
     create: function () {
+        music = this.sound.add('backgroundMusic');
+
+        music.play();
         var map = this.make.tilemap({key: 'map'});
         var tiles = map.addTilesetImage('spritesheet', 'tiles');
 
@@ -73,6 +80,33 @@ var WorldScene = new Phaser.Class({
             repeat: -1
         });
 
+        this.anims.create({
+            key: 'up',
+            frames: this.anims.generateFrameNumbers('player', {frames: [2, 8, 2, 14]}),
+            frameRate: 10,
+            repeat: -1
+
+        });
+
+        this.anims.create({
+            key: 'down',
+            frames: this.anims.generateFrameNumbers('player', {frames: [0, 6, 0, 12]}),
+            frameRate: 10,
+            repeat: -1
+        });
+
+        this.physics.add.collider(this.player, obstacles);
+
+        this.spawns = this.physics.add.group({ classType: Phaser.GameObjects.Zone });
+        for (var i = 0; i < 30; i++) {
+            var x = Phaser.Math.RND.between(0, this.physics.world.bounds.width);
+            var y = Phaser.Math.RND.between(0, this.physics.world.bounds.height);
+            // parameters are x, y, width, height
+            this.spawns.create(x, y, 20, 20);
+        }
+
+        this.physics.add.overlap(this.player, this.spawns, this.onMeetEnemy, false, this);
+
     },
     update: function (time, delta) {
         this.player.body.setVelocity(0);
@@ -81,10 +115,13 @@ var WorldScene = new Phaser.Class({
         if (this.cursors.left.isDown)
         {
             this.player.body.setVelocityX(-80);
+            this.player.flipX = true;
         }
         else if (this.cursors.right.isDown)
         {
             this.player.body.setVelocityX(80);
+            this.player.flipX = false;
+
         }
         // Vertical movement
         if (this.cursors.up.isDown)
@@ -117,6 +154,9 @@ var WorldScene = new Phaser.Class({
             this.player.anims.stop();
         }
 
+    },
+    onMeetEnemy: function(){
+
     }
 
 });
@@ -128,8 +168,8 @@ console.log(Phaser.Scene);
 var config = {
     type: Phaser.AUTO,
     parent: 'content',
-    width: 700,
-    height: 700,
+    width: 320,
+    height: 240,
     zoom: 2,
     pixelArt: true,
     physics: {
