@@ -20,6 +20,8 @@ var BootScene = new Phaser.Class({
 
 
         this.load.audio('backgroundMusic', 'assets/bensound-scifi.mp3' );
+
+        this.load.audio('bump','assets/coinget.ogg');
     },
 
     create: function ()
@@ -28,6 +30,28 @@ var BootScene = new Phaser.Class({
 
     }
 });
+
+var BattleScene = new Phaser.Class({
+
+    Extends: Phaser.Scene,
+
+    initialize: function BattleScene () {
+        Phaser.Scene.call(this, { key: 'BattleScene'});
+    },
+
+    preload: function () {
+        alert("FOO!!!!!!!!!!!");
+
+    },
+    create: function() {
+        this.cameras.main.setBackgroundColor('rgba(0, 200, 0, 0.5)');
+        //var warrior = new Player(this, 250, 50, 'player', 1, 'Warrior', 100, 20);
+        //this.add.existing(warrior);
+        alert("does this work?");
+    }
+
+});
+
 
 var WorldScene = new Phaser.Class({
 
@@ -51,7 +75,6 @@ var WorldScene = new Phaser.Class({
         var grass = map.createStaticLayer('Grass', tiles, 0, 0);
         var obstacles = map.createStaticLayer('Obstacles', tiles, 0, 0);
         obstacles.setCollisionByExclusion([-1]);
-
         this.player = this.physics.add.sprite(50, 100, 'player', 6);
 
         this.physics.world.bounds.width = map.widthInPixels;
@@ -106,7 +129,6 @@ var WorldScene = new Phaser.Class({
         }
 
         this.physics.add.overlap(this.player, this.spawns, this.onMeetEnemy, false, this);
-
     },
     update: function (time, delta) {
         this.player.body.setVelocity(0);
@@ -156,6 +178,8 @@ var WorldScene = new Phaser.Class({
 
     },
     onMeetEnemy: function(){
+        alert('meet');
+        this.scene.start('BattleScene');
 
     }
 
@@ -163,6 +187,7 @@ var WorldScene = new Phaser.Class({
 
 console.log(BootScene);
 console.log(WorldScene);
+console.log(BattleScene);
 console.log(Phaser.Scene);
 
 var config = {
