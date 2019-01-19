@@ -15,7 +15,8 @@ var config = {
     scene: [
         BootScene,
         WorldScene,
-        BattleScene
+        BattleScene,
+        BattleSceneUI
     ]
 };
 
