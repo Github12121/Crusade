@@ -52,12 +52,17 @@ var BattleScene = new Phaser.Class({
         warrior.flipX = true;
         warrior.setScale(1.5);
         this.add.existing(warrior);
-        var mage = new Player(this, 250, 10, 'player', 1, 'Mage', 100, 20);
 
+        var mage = new Player(this, 250, 100, 'player', 4, 'Mage', 100, 20);
+        mage.flipX = true;
+        mage.setScale(2);
+        this.add.existing(mage);
 
-        var hobbit = new Enemy(this, 50, 50, 'enemy', 1, 'Hobbit', 100, 20);
-        var blackCat = new Enemy(this, 50, 10, 'enemy', 1, 'Black Cat', 100, 20);
-
+        var cyclops = new Enemy(this, 50, 85, 'cyclops', 0, 'Cyclops', 100, 20);
+        cyclops.flipX = false;
+        cyclops.setScale(1.2);
+        cyclops.anims.play('cyclopsFight');
+        this.add.existing(cyclops);
 
         this.scene.launch('BattleSceneUI');
     }
