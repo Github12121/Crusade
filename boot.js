@@ -22,6 +22,8 @@ var BootScene = new Phaser.Class({
 
         this.load.spritesheet('koala', 'assets/koala.png', {frameWidth: 25, frameHeight: 20});
 
+        this.load.spritesheet('spider', 'assets/spider.png', {frameWidth: 32, frameHeight: 32});
+
         this.load.audio('backgroundMusic', 'assets/bensound-scifi.mp3' );
 
         this.load.audio('bump','assets/coinget.ogg');
@@ -48,6 +50,13 @@ var BootScene = new Phaser.Class({
         this.input.keyboard.on('keydown', function() {
             this.scene.start('WorldScene');
         }, this);
+
+        this.anims.create({
+            key: 'spiderFight',
+            frames: this.anims.generateFrameNumbers('spider', {start: 0, end: 4, first: 0}),
+            frameRate: 12,
+            repeat: -1
+        })
 
 
     }
