@@ -15,6 +15,10 @@ var Character = new Phaser.Class({
 
     takeDamage: function(damage) {
         this.hp -= damage;
+    },
+
+    choose: function() {
+        return Math.floor(Math.random() * 4);
     }
 });
 
@@ -90,7 +94,14 @@ var BattleScene = new Phaser.Class({
         this.currentCharacter = this.characters[this.characterIndex];
         console.log(this.currentCharacter);
         this.status.text = "It is the " + this.currentCharacter.type + " turn";
+
+        var opponent = this.currentCharacter.choose();
+        console.log(this.characters[opponent].type);
+
     }
+
+
+
 
 });
 var BattleSceneUI = new Phaser.Class({
