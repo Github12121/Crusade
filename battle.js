@@ -98,7 +98,6 @@ var BattleScene = new Phaser.Class({
         this.status.text.setText("It is the " + this.currentCharacter.type + "'s turn");
 
         var opponent = this.currentCharacter.choose();
-        this.currentCharacter = null;
     }
 });
 
