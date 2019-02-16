@@ -1,3 +1,4 @@
+PAUSE = false;
 
 var Character = new Phaser.Class({
     Extends: Phaser.GameObjects.Sprite,
@@ -86,6 +87,11 @@ var BattleScene = new Phaser.Class({
 
     update: function()
     {
+        if (PAUSE) {
+            console.log(PAUSE);
+            return;
+        }
+
         this.nextTurn();
     },
 
@@ -98,6 +104,8 @@ var BattleScene = new Phaser.Class({
         this.status.text.setText("It is the " + this.currentCharacter.type + "'s turn");
 
         var opponent = this.currentCharacter.choose();
+        PAUSE = true;
+        setTimeout(function() { PAUSE = false;}, 1000);
     }
 });
 
