@@ -9,6 +9,10 @@ var Character = new Phaser.Class({
         this.maxHp = this.hp = hp;
         this.damage = damage; // default damage
     },
+    
+    setOpponents: function(opponents) {
+        this.opponents = opponents;
+    },
 
     attack: function(target) {
         target.takeDamage(this.damage);
@@ -19,13 +23,13 @@ var Character = new Phaser.Class({
     },
 
     choose: function() {
-        return Math.floor(Math.random() * 4);
+        var index = Math.floor(Math.random() * 2);
+        return this.opponents[index]; 
     }
 });
 
 var Player = new Phaser.Class({
     Extends: Character,
-
     initialize: function Player(scene, x, y, texture, frame, type, hp, damage) {
         Character.call(this, scene, x, y, texture, frame, type, hp, damage);
     }
@@ -75,6 +79,13 @@ var BattleScene = new Phaser.Class({
         spider.anims.play('spiderFight');
         this.add.existing(spider);
 
+        warrior.setOpponents([cyclops, spider]);
+        console.log(warrior);
+
+        mage.setOpponents([cyclops, spider]);
+        cyclops.setOpponents([warrior, mage]);
+        spider.setOpponents([warrior, mage]);
+        
         this.currentCharacter = warrior;
         this.characters = [warrior, mage, cyclops, spider];
         this.characterIndex = 0;
@@ -88,7 +99,6 @@ var BattleScene = new Phaser.Class({
     update: function()
     {
         if (PAUSE) {
-            console.log(PAUSE);
             return;
         }
 
@@ -101,9 +111,15 @@ var BattleScene = new Phaser.Class({
             this.characterIndex = 0;
         }
         this.currentCharacter = this.characters[this.characterIndex];
-        this.status.text.setText("It is the " + this.currentCharacter.type + "'s turn");
+        var text = "It is the " + this.currentCharacter.type + "'s turn\n";
 
         var opponent = this.currentCharacter.choose();
+        this.currentCharacter.attack(opponent);
+
+        text += this.currentCharacter.type + " attacks " + opponent.type + "\n";
+        text += opponent.type + " has " + opponent.hp + "HP left!";
+        this.status.text.setText(text);
+
         PAUSE = true;
         setTimeout(function() { PAUSE = false;}, 1000);
     }
