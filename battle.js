@@ -78,7 +78,10 @@ var BattleScene = new Phaser.Class({
         this.characters = [warrior, mage, cyclops, spider];
         this.characterIndex = 0;
 
-        this.status = this.scene.launch('BattleSceneUI');
+        // Create status box and retain handle
+        this.scene.launch('BattleSceneUI');
+        this.status = this.scene.get('BattleSceneUI');
+
     },
 
     update: function()
@@ -92,18 +95,13 @@ var BattleScene = new Phaser.Class({
             this.characterIndex = 0;
         }
         this.currentCharacter = this.characters[this.characterIndex];
-        console.log(this.currentCharacter);
-        this.status.text = "It is the " + this.currentCharacter.type + " turn";
+        this.status.text.setText("It is the " + this.currentCharacter.type + "'s turn");
 
         var opponent = this.currentCharacter.choose();
-        console.log(this.characters[opponent].type);
-
+        this.currentCharacter = null;
     }
-
-
-
-
 });
+
 var BattleSceneUI = new Phaser.Class({
 
     Extends: Phaser.Scene,
@@ -113,12 +111,11 @@ var BattleSceneUI = new Phaser.Class({
     },
 
     create: function() {
-        this.text = 'Let us begin!';
         this.graphics = this.add.graphics();
         this.graphics.lineStyle(1, 0xffffff);
         this.graphics.fillStyle(0x031f4c, 1);
         this.graphics.strokeRect(10, 150, 300, 80);
         this.graphics.fillRect(10,151,299,79);
-        this.add.text(38, 150, this.text, {fill: 'white'});
+        this.text = this.add.text(35, 160, 'Let us begin!', {fill: 'white'});
     }
 });
