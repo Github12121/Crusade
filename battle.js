@@ -6,8 +6,17 @@ var Character = new Phaser.Class({
     initialize: function Character(scene, x, y, texture, frame, type, hp, damage) {
         Phaser.GameObjects.Sprite.call(this, scene, x, y, texture, frame);
         this.type = type;
-        this.maxHp = this.hp = hp;
+        this.hp = hp;
         this.damage = damage; // default damage
+
+        this.setInteractive({useHandCursor: true, pixelPerfect: true});
+        this.on('pointerover', function() {
+            this.setTint(0x00ff00);
+        });
+        this.on('pointerout', function() {
+            this.clearTint();
+        });
+
     },
     
     setOpponents: function(opponents) {
@@ -15,11 +24,20 @@ var Character = new Phaser.Class({
     },
 
     attack: function(target) {
+        if (target.hp <= 0) {
+            return;
+        }
         target.takeDamage(this.damage);
+        if (target.hp <= 0) {
+            target = null;
+        }
     },
 
     takeDamage: function(damage) {
         this.hp -= damage;
+        if (this.hp <= 0) {
+            this.visible = false;
+        }
     },
 
     choose: function() {
@@ -102,6 +120,14 @@ var BattleScene = new Phaser.Class({
             return;
         }
 
+        if (this.characters[2].hp <= 0 && this.characters[3].hp <= 0) {
+            this.visible = false;
+
+            this.scene.sleep('BattleSceneUI');
+            this.scene.switch('WorldScene');
+
+        }
+
         this.nextTurn();
     },
 
@@ -111,6 +137,12 @@ var BattleScene = new Phaser.Class({
             this.characterIndex = 0;
         }
         this.currentCharacter = this.characters[this.characterIndex];
+
+        // Saving the WorldScene from a zombie apocalypse!
+        if (this.currentCharacter.hp <= 0) {
+            return;
+        }
+
         var text = "It is the " + this.currentCharacter.type + "'s turn\n";
 
         var opponent = this.currentCharacter.choose();

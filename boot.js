@@ -32,6 +32,7 @@ var BootScene = new Phaser.Class({
     create: function ()
     {
 
+
         this.anims.create({
             key: 'cyclopsFight',
             frames: this.anims.generateFrameNumbers('cyclops', { start: 0, end: 11, first: 0}),

@@ -127,7 +127,7 @@ var WorldScene = new Phaser.Class({
         zone.x = Phaser.Math.RND.between(0, this.physics.world.bounds.width);
         zone.y = Phaser.Math.RND.between(0, this.physics.world.bounds.height);
         this.cameras.main.shake(3000);
-        this.scene.switch('BattleScene');
+        setTimeout(function(that) { that.scene.switch('BattleScene'); }, 100, this );
     },
     soundEffectPlay: function(){
         var bump = this.sound.add('bump');
