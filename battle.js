@@ -1,66 +1,5 @@
 PAUSE = false;
 
-var Character = new Phaser.Class({
-    Extends: Phaser.GameObjects.Sprite,
-
-    initialize: function Character(scene, x, y, texture, frame, type, hp, damage) {
-        Phaser.GameObjects.Sprite.call(this, scene, x, y, texture, frame);
-        this.type = type;
-        this.hp = hp;
-        this.damage = damage; // default damage
-
-        this.setInteractive({useHandCursor: true, pixelPerfect: true});
-        this.on('pointerover', function() {
-            this.setTint(0x00ff00);
-        });
-        this.on('pointerout', function() {
-            this.clearTint();
-        });
-
-    },
-    
-    setOpponents: function(opponents) {
-        this.opponents = opponents;
-    },
-
-    attack: function(target) {
-        if (target.hp <= 0) {
-            return;
-        }
-        target.takeDamage(this.damage);
-        if (target.hp <= 0) {
-            target = null;
-        }
-    },
-
-    takeDamage: function(damage) {
-        this.hp -= damage;
-        if (this.hp <= 0) {
-            this.visible = false;
-        }
-    },
-
-    choose: function() {
-        var index = Math.floor(Math.random() * 2);
-        return this.opponents[index]; 
-    }
-});
-
-var Player = new Phaser.Class({
-    Extends: Character,
-    initialize: function Player(scene, x, y, texture, frame, type, hp, damage) {
-        Character.call(this, scene, x, y, texture, frame, type, hp, damage);
-    }
-});
-
-var Enemy = new Phaser.Class({
-    Extends: Character,
-
-    initialize: function Enemy(scene, x, y, texture, frame, type, hp, damage) {
-        Character.call(this, scene, x, y, texture, frame, type, hp, damage);
-    }
-});
-
 var BattleScene = new Phaser.Class({
 
     Extends: Phaser.Scene,
@@ -70,17 +9,17 @@ var BattleScene = new Phaser.Class({
     },
 
     create: function() {
-        //alert('Muahahaha');
+
         this.cameras.main.setBackgroundColor('rgba(0, 200, 0, 0.5)');
 
         this.currentCharacter = null;
 
-        var warrior = new Player(this, 250, 50, 'player', 1, 'Warrior', 100, 20);
+        var warrior = new Player(this, 250, 50, 'player', 1, 'Warrior', 100, 50);
         warrior.flipX = true;
         warrior.setScale(1.5);
         this.add.existing(warrior);
 
-        var mage = new Player(this, 250, 100, 'player', 4, 'Mage', 100, 20);
+        var mage = new Player(this, 250, 100, 'player', 4, 'Mage', 100, 50);
         mage.flipX = true;
         mage.setScale(2);
         this.add.existing(mage);
@@ -119,19 +58,29 @@ var BattleScene = new Phaser.Class({
         if (PAUSE) {
             return;
         }
-
+        this.scene.wake('BattleSceneUI');
         if (this.characters[2].hp <= 0 && this.characters[3].hp <= 0) {
             this.visible = false;
 
             this.scene.sleep('BattleSceneUI');
             this.scene.switch('WorldScene');
 
+            this.characters[2].reset();
+            this.characters[3].reset();
+        }
+        if (this.characters[0].hp <= 0 && this.characters[1].hp <= 0) {
+            alert('You\'re dead');
+            this.scene.pause();
         }
 
         this.nextTurn();
     },
 
     nextTurn: function() {
+        if (!this.opponent) {
+            return;
+        }
+
         this.characterIndex = this.characterIndex + 1;
         if(this.characterIndex > 3) {
             this.characterIndex = 0;
@@ -145,15 +94,19 @@ var BattleScene = new Phaser.Class({
 
         var text = "It is the " + this.currentCharacter.type + "'s turn\n";
 
-        var opponent = this.currentCharacter.choose();
-        this.currentCharacter.attack(opponent);
+        this.opponent = this.currentCharacter.choose();
+        if (this.opponent) {
+            this.currentCharacter.attack(this.opponent);
 
-        text += this.currentCharacter.type + " attacks " + opponent.type + "\n";
-        text += opponent.type + " has " + opponent.hp + "HP left!";
-        this.status.text.setText(text);
+            text += this.currentCharacter.type + " attacks " + this.opponent.type + "\n";
+            text += this.opponent.type + " has " + this.opponent.hp + "HP left!";
+            this.status.text.setText(text);
 
-        PAUSE = true;
-        setTimeout(function() { PAUSE = false;}, 1000);
+            PAUSE = true;
+            setTimeout(function () {
+                PAUSE = false;
+            }, 2000);
+        }
     }
 });
 
